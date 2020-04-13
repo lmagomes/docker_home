@@ -1,0 +1,75 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init/postgres.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/psql_password
+    secrets:
+      - psql_password
+
+  nextcloud:
+    image: nextcloud
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 9001:80
+    volumes:
+      - nextcloud:/var/www/html
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB_FILE=/run/secrets/postgres_db
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - NEXTCLOUD_ADMIN_PASSWORD_FILE=/run/secrets/nextcloud_admin_password
+      - NEXTCLOUD_ADMIN_USER_FILE=/run/secrets/nextcloud_admin_user
+    secrets:
+      - nextcloud_admin_password
+      - nextcloud_admin_user
+      - postgres_db
+      - postgres_password
+      - postgres_user
+
+  passwords:
+    image: mprasil/bitwarden:raspberry
+    restart: always
+    secrets:
+      - bw_admin_token
+    ports:
+      - 443:80
+    environment:
+      ROCKET_TLS: '{certs="/ssl/certs.pem",key="/ssl/key.pem"}'
+      ADMIN_TOKEN: /run/secrets/bw_admin_token
+      LOG_FILE: /data/bitwarden.log
+      ROCKET_LOG: critical
+      EXTENDED_LOGGING: 'false'
+    volumes:
+      - /ssl/keys:/ssl/
+      - /mnt/disk/bwdata/:/data/
+
+volumes:
+  postgres_data:
+  nextcloud:
+
+secrets:
+  psql_password:
+    file: ./secrets/psql_password.txt
+  nextcloud_admin_password:
+    file: ./secrets/nextcloud_admin_password.txt
+  nextcloud_admin_user:
+    file: ./secrets/nextcloud_admin_user.txt
+  postgres_db:
+    file: ./secrets/postgres_db.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  bw_admin_token:
+    file: ./secrets/bw_admin_token.txt
