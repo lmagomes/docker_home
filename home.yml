@@ -54,9 +54,26 @@ services:
       - /ssl/keys:/ssl/
       - /mnt/disk/bwdata/:/data/
 
+  torrents:
+    image: linuxserver/transmission
+    restart: always
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    environment:
+      TRANSMISSION_WEB_HOME: /transmission-web-control/
+      PUID: 1000
+      PGID: 1000
+      TZ: 'Europe/Lisbon'
+    volumes:
+      - transmission_data:/config
+      - /mnt/disk/exports/data/downloads:/downloads
+
 volumes:
   postgres_data:
   nextcloud:
+  transmission_data:
 
 secrets:
   psql_password:
@@ -73,3 +90,4 @@ secrets:
     file: ./secrets/postgres_user.txt
   bw_admin_token:
     file: ./secrets/bw_admin_token.txt
+
