@@ -12,7 +12,7 @@ services:
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/psql_password
     secrets:
-      - psql_password
+      - postgresql_password
 
   nextcloud:
     image: nextcloud
@@ -33,9 +33,9 @@ services:
     secrets:
       - nextcloud_admin_password
       - nextcloud_admin_user
-      - postgres_db
-      - postgres_password
-      - postgres_user
+      - nextcloud_database_user
+      - nextcloud_database_password
+      - nextcloud_database
 
   passwords:
     image: mprasil/bitwarden:raspberry
@@ -76,18 +76,18 @@ volumes:
   transmission_data:
 
 secrets:
-  psql_password:
-    file: ./secrets/psql_password.txt
+  postgresql_password:
+    external: true
   nextcloud_admin_password:
-    file: ./secrets/nextcloud_admin_password.txt
+    external: true
   nextcloud_admin_user:
-    file: ./secrets/nextcloud_admin_user.txt
-  postgres_db:
-    file: ./secrets/postgres_db.txt
-  postgres_password:
-    file: ./secrets/postgres_password.txt
-  postgres_user:
-    file: ./secrets/postgres_user.txt
+    external: true
+  nextcloud_database:
+    external: true
+  nextcloud_database_password:
+    external: true
+  nextcloud_database_user:
+    external: true
   bw_admin_token:
-    file: ./secrets/bw_admin_token.txt
+    external: true
 
