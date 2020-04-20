@@ -10,7 +10,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init/postgres.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/psql_password
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgresql_password
     secrets:
       - postgresql_password
 
