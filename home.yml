@@ -14,28 +14,28 @@ services:
     secrets:
       - postgresql_password
 
-  nextcloud:
-    image: nextcloud
-    restart: always
-    depends_on:
-      - db
-    ports:
-      - 9001:80
-    volumes:
-      - nextcloud:/var/www/html
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_DB_FILE=/run/secrets/postgres_db
-      - POSTGRES_USER_FILE=/run/secrets/postgres_user
-      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
-      - NEXTCLOUD_ADMIN_PASSWORD_FILE=/run/secrets/nextcloud_admin_password
-      - NEXTCLOUD_ADMIN_USER_FILE=/run/secrets/nextcloud_admin_user
-    secrets:
-      - nextcloud_admin_password
-      - nextcloud_admin_user
-      - nextcloud_database_user
-      - nextcloud_database_password
-      - nextcloud_database
+#  nextcloud:
+#    image: nextcloud
+#    restart: always
+#    depends_on:
+#      - db
+#    ports:
+#      - 9001:80
+#    volumes:
+#      - nextcloud:/var/www/html
+#    environment:
+#      - POSTGRES_HOST=db
+#      - POSTGRES_DB_FILE=/run/secrets/postgres_db
+#      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+#      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+#      - NEXTCLOUD_ADMIN_PASSWORD_FILE=/run/secrets/nextcloud_admin_password
+#      - NEXTCLOUD_ADMIN_USER_FILE=/run/secrets/nextcloud_admin_user
+#    secrets:
+#      - nextcloud_admin_password
+#      - nextcloud_admin_user
+#      - nextcloud_database_user
+#      - nextcloud_database_password
+#      - nextcloud_database
 
   passwords:
     image: mprasil/bitwarden:raspberry
@@ -70,10 +70,23 @@ services:
       - transmission_data:/config
       - /mnt/disk/exports/data/downloads:/downloads
 
+  rss:
+    image: linuxserver/freshrss
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+    volumes:
+      - rss_data:/config
+    ports:
+      - 9090:80
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   nextcloud:
   transmission_data:
+  rss_data:
 
 secrets:
   postgresql_password:
