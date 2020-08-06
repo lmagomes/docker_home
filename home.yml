@@ -14,28 +14,16 @@ services:
     secrets:
       - postgresql_password
 
-#  nextcloud:
-#    image: nextcloud
-#    restart: always
-#    depends_on:
-#      - db
-#    ports:
-#      - 9001:80
-#    volumes:
-#      - nextcloud:/var/www/html
-#    environment:
-#      - POSTGRES_HOST=db
-#      - POSTGRES_DB_FILE=/run/secrets/postgres_db
-#      - POSTGRES_USER_FILE=/run/secrets/postgres_user
-#      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
-#      - NEXTCLOUD_ADMIN_PASSWORD_FILE=/run/secrets/nextcloud_admin_password
-#      - NEXTCLOUD_ADMIN_USER_FILE=/run/secrets/nextcloud_admin_user
-#    secrets:
-#      - nextcloud_admin_password
-#      - nextcloud_admin_user
-#      - nextcloud_database_user
-#      - nextcloud_database_password
-#      - nextcloud_database
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_password
+    volumes:
+      - grafana_data:/var/lib/grafana
+    secrets:
+      - grafana_password
 
   passwords:
     image: mprasil/bitwarden:raspberry
@@ -84,22 +72,14 @@ services:
 
 volumes:
   postgres_data:
-  nextcloud:
+  grafana_data:
   transmission_data:
   rss_data:
 
 secrets:
   postgresql_password:
     external: true
-  nextcloud_admin_password:
-    external: true
-  nextcloud_admin_user:
-    external: true
-  nextcloud_database:
-    external: true
-  nextcloud_database_password:
-    external: true
-  nextcloud_database_user:
+  grafana_password:
     external: true
   bw_admin_token:
     external: true
