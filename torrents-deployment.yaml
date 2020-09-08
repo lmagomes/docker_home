@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: torrents
+  name: torrents
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ./kompose convert
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: torrents
+    spec:
+      containers:
+      - env:
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        - name: TRANSMISSION_WEB_HOME
+          value: /transmission-web-control/
+        - name: TZ
+          value: Europe/Lisbon
+        image: linuxserver/transmission
+        name: torrents
+        ports:
+        - containerPort: 9091
+        - containerPort: 51413
+        - containerPort: 51413
+          protocol: UDP
+        resources: {}
+        volumeMounts:
+        - mountPath: /config
+          name: transmission-data
+        - mountPath: /downloads
+          name: torrents-claim1
+      restartPolicy: Always
+      volumes:
+      - name: transmission-data
+        persistentVolumeClaim:
+          claimName: transmission-data
+      - name: torrents-claim1
+        persistentVolumeClaim:
+          claimName: torrents-claim1
+status: {}
